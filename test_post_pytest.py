@@ -3,12 +3,11 @@ import json
 import re
 
 
-url = 'http://localhost:3000'
+url = 'http://localhost:3000/'
 headers = {'Content-Type': 'application/json'}
 payload = {'email': '1@1.com'}
 
 resp = requests.post(url=url, data=payload)
-resp_body = resp.json()
 
 
 def test_post_status_code():

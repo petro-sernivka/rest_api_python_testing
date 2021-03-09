@@ -19,7 +19,7 @@ def test_post_status_code():
 
 # Schema validation: fields name "status_code" (int type) and "hash_value" (str type)
 def test_schema_validation():
-    assert resp_body.keys() == ('status_code', 'hash_value')
+    assert list(resp_body.keys()) == ['status_code', 'hash_value']
     assert isinstance(resp_body['status_code'], int)
     assert isinstance(resp_body['hash_value'], str)
 

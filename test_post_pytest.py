@@ -35,6 +35,13 @@ def test_post_hash_value():
 
 
 # Verifying the same "hash_value" for multiple POST of the same email
+def test_multiple_post():
+    resp_1 = requests.post(url=url, data=payload)
+    resp_body_1 = resp_1.json()
+    resp_2 = requests.post(url=url, data=payload)
+    resp_body_2 = resp_2.json()
+
+    assert resp_body_1['hash_value'] == resp_body_2['hash_value']
 
 
 # Verifying headers are as expected

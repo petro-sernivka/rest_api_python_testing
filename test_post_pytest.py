@@ -45,6 +45,17 @@ def test_multiple_post():
 
 
 # Verifying headers are as expected
+def test_headers_list():
+    expected_headers = ('x-powered-by',
+                        'content-type',
+                        'content-length',
+                        'etag',
+                        'date',
+                        'connection',
+                        'keep-alive')
+
+    for header in resp.headers._store:
+        assert header in expected_headers
 
 
 # Response time < 50 ms

@@ -26,8 +26,9 @@ def test_schema_validation():
 
 # "hash_value" matches a regular expression
 def test_post_hash_value():
-    assert re.match(pattern=r'[a-f0-9]{3}:[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-                    string=resp_body['hash_value'])
+    hash_value_pattern = r'[a-f0-9]{3}:[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'
+
+    assert re.match(pattern=hash_value_pattern, string=resp_body['hash_value'])
 
 
 # Verifying the data was saved correctly (by SQL query)

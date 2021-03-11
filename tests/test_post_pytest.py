@@ -3,8 +3,7 @@ import json
 import re
 import psycopg2
 
-from consts import *
-
+from rest_api_python_testing.consts import *
 
 resp = requests.post(url=URL, data=PAYLOAD)
 resp_body = resp.json()
@@ -28,6 +27,22 @@ def test_post_hash_value():
 
 
 # Verifying the data was saved correctly (by SQL query)
+def test_data_is_posted():
+    # cur = setup_database
+    conn = psycopg2.connect(
+        host="localhost",
+        database="uuid",
+        user="postgres",
+        password="postgres")
+
+    cur = conn.cursor()
+    cur.execute(f"SELECT * FROM users WHERE email='{PAYLOAD['email']}'")
+    query_result = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    assert query_result[0][0] == resp_body['hash_value']
 
 
 # Verifying the same "hash_value" for multiple POST of the same email

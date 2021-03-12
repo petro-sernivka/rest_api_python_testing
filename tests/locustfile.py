@@ -1,31 +1,17 @@
-import requests
-import gevent
-import pytest
-import json
-
 from locust import HttpUser, task, between
+from rest_api_python_testing.consts import *
+from datetime import datetime
 from locust.env import Environment
 from locust.stats import stats_printer, stats_history
 from locust.log import setup_logging
 
 
-def test_post():
-    response = requests.post('https://httpbin.org/post', data={'key': 'value'})
-    assert response.status_code == 200
-
-
-setup_logging("INFO", None)
-
-
 class User(HttpUser):
-    wait_time = between(0.1, 1)
+    wait_time = between(1, 1.1)
 
     @task
-    def hello_world(self):
-        self.client.post('https://httpbin.org/post', data={'key1': 'value1'})
-
-    # def on_start(self):
-    #     self.client.post('https://httpbin.org/post', data={'key3': 'value3'})
+    def post_api(self):
+        self.client.post(url=URL, data={'email': f'{str(datetime.now())}@1.com'})
 
 
 # # setup Environment and Runner

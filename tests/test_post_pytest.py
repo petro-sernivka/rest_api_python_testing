@@ -82,8 +82,16 @@ def test_invalid_email():
         assert resp_body_inv['message'] == INVALID_EMAIL_MESSAGE, \
             f'"message" should be {INVALID_EMAIL_MESSAGE}, not {resp_body_inv["message"]} for "{email}" email'
 
+
 # Invalid values in HTTP headers
+
+
 # Unsupported methods for endpoints
+def test_unsupported_methods():
+    for method in UNSUPPORTED_METHODS:
+        resp_unsupported = requests.request(method=method, url=URL, data=PAYLOAD)
+        assert resp_unsupported.status_code == 404, \
+            f'Response status code should be 404, not {resp_unsupported.status_code} for "{method}" method'
 
 
 # Destructive tests

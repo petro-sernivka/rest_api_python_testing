@@ -104,4 +104,18 @@ def test_unsupported_methods():
 
 # Destructive tests
 # Empty value for email parameter
+def test_empty_email():
+    resp_empty_email = requests.post(url=URL, data={'email': ''})
+    resp_empty_email_json = resp_empty_email.json()
+
+    assert resp_empty_email.status_code == 400, \
+        f'Response status code should be 400, not {resp_empty_email.status_code} for empty email'
+
+    assert resp_empty_email_json['status_code'] == 2, \
+        f'"status_code" should be 2, not {resp_empty_email_json["status_code"]} for empty email'
+
+    assert resp_empty_email_json['message'] == EMPTY_EMAIL_MESSAGE, \
+        f'"message" should be {EMPTY_EMAIL_MESSAGE}, not {resp_empty_email_json["message"]} for empty email'
+
+
 # Incorrect HTTP headers

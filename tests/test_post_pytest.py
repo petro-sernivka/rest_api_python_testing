@@ -84,12 +84,20 @@ def test_invalid_email():
 
 
 # Invalid values in HTTP headers
+def test_invalid_header_value():
+    resp_sess = requests.Session()
+    resp_sess.headers.update(INVALID_HEADER_VALUE)
+    resp_sess = resp_sess.post(url=URL, data=PAYLOAD)
+
+    assert resp_sess.status_code == 400, \
+        f'Response status code should be 400, not {resp_sess.status_code}'
 
 
 # Unsupported methods for endpoints
 def test_unsupported_methods():
     for method in UNSUPPORTED_METHODS:
         resp_unsupported = requests.request(method=method, url=URL, data=PAYLOAD)
+
         assert resp_unsupported.status_code == 404, \
             f'Response status code should be 404, not {resp_unsupported.status_code} for "{method}" method'
 

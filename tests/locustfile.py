@@ -9,9 +9,13 @@ from locust.log import setup_logging
 class User(HttpUser):
     wait_time = between(1, 1.1)
 
-    @task
-    def post_api(self):
+    # @task
+    def post_api_random(self):
         self.client.post(url=URL, data={'email': f'{str(datetime.now())}@1.com'})
+
+    @task
+    def post_api_existed(self):
+        self.client.post(url=URL, data=PAYLOAD)
 
 
 # # setup Environment and Runner

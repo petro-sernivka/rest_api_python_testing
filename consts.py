@@ -31,3 +31,5 @@ INVALID_EMAILS = ('address',
 INVALID_EMAIL_MESSAGE = 'Email is not valid'
 
 INVALID_HEADER_VALUE = {'Content-Type': 'not_valid_value'}
+
+UNSUPPORTED_METHODS = ('HEAD', 'GET', 'PUT', 'PATCH', 'DELETE')

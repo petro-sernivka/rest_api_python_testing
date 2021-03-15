@@ -68,6 +68,20 @@ def test_response_time():
 
 # Negative tests
 # Invalid value for email parameter
+def test_invalid_email():
+    for email in INVALID_EMAILS:
+        resp_inv = requests.post(url=URL, data={'email': email})
+        resp_body_inv = resp_inv.json()
+
+        assert resp_inv.status_code == 400, \
+            f'Response status code should be 400, not {resp_inv.status_code} for "{email}" email'
+
+        assert resp_body_inv['status_code'] == 2, \
+            f'"status_code" should be 2, not {resp_body_inv["status_code"]} for "{email}" email'
+
+        assert resp_body_inv['message'] == INVALID_EMAIL_MESSAGE, \
+            f'"message" should be {INVALID_EMAIL_MESSAGE}, not {resp_body_inv["message"]} for "{email}" email'
+
 # Invalid values in HTTP headers
 # Unsupported methods for endpoints
 

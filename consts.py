@@ -29,5 +29,8 @@ INVALID_EMAILS = ('address',
                   'Abc..123@example.com')
 
 INVALID_EMAIL_MESSAGE = 'Email is not valid'
+EMPTY_EMAIL_MESSAGE = 'Email is needed to make such request'
 
 INVALID_HEADER_VALUE = {'Content-Type': 'not_valid_value'}
+
+UNSUPPORTED_METHODS = ('HEAD', 'GET', 'PUT', 'PATCH', 'DELETE')

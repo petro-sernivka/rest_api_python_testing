@@ -118,4 +118,19 @@ def test_empty_email():
         f'"message" should be {EMPTY_EMAIL_MESSAGE}, not {resp_empty_email_json["message"]} for empty email'
 
 
+# Empty body request
+def test_empty_body():
+    resp_empty_body = requests.post(url=URL, data='')
+    resp_empty_body_json = resp_empty_body.json()
+
+    assert resp_empty_body.status_code == 400, \
+        f'Response status code should be 400, not {resp_empty_body.status_code} for empty body'
+
+    assert resp_empty_body_json['status_code'] == 2, \
+        f'"status_code" should be 2, not {resp_empty_body_json["status_code"]} for empty body'
+
+    assert resp_empty_body_json['message'] == EMPTY_EMAIL_MESSAGE, \
+        f'"message" should be {EMPTY_EMAIL_MESSAGE}, not {resp_empty_body_json["message"]} for empty body'
+
+
 # Incorrect HTTP headers

@@ -11,7 +11,7 @@ class User(HttpUser):
 
     # @task
     def post_api_random(self):
-        self.client.post(url=URL, data={'email': f'{str(datetime.now())}@1.com'})
+        self.client.post(url=URL, data={'email': f'{str(datetime.now())[17:]}@1.com'})
 
     @task
     def post_api_existed(self):

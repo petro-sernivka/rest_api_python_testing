@@ -131,6 +131,3 @@ def test_empty_body():
 
     assert resp_empty_body_json['message'] == EMPTY_EMAIL_MESSAGE, \
         f'"message" should be {EMPTY_EMAIL_MESSAGE}, not {resp_empty_body_json["message"]} for empty body'
-
-
-# Incorrect HTTP headers

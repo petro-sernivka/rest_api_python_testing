@@ -33,6 +33,11 @@ INVALID_EMAILS = ('address',
                   'email@example..com',
                   'Abc..123@example.com')
 
+INVALID_PHONES = ('12345678901',
+                  '+1234567890a',
+                  '2345678901',
+                  '+abcdefghijk')
+
 INVALID_EMAIL_MESSAGE = 'value is not valid'
 EMPTY_EMAIL_MESSAGE = 'auth, sourceId, dataType and value parameters are required to make this request'
 

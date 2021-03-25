@@ -2,7 +2,10 @@ import socket
 
 # POST request params
 URL = f'http://{socket.gethostbyname(socket.gethostname())}:3000/'
-PAYLOAD = {'email': 'test@test.com'}
+PAYLOAD = {"auth": "test",
+           "sourceId": "123",
+           "dataType": "email",
+           "value": "test@test.com"}
 
 RESPONSE_SCHEMA_FIELDS = ['status_code', 'hash_value']
 
@@ -30,8 +33,8 @@ INVALID_EMAILS = ('address',
                   'email@example..com',
                   'Abc..123@example.com')
 
-INVALID_EMAIL_MESSAGE = 'Email is not valid'
-EMPTY_EMAIL_MESSAGE = 'Email is needed to make such request'
+INVALID_EMAIL_MESSAGE = 'value is not valid'
+EMPTY_EMAIL_MESSAGE = 'auth, sourceId, dataType and value parameters are required to make this request'
 
 INVALID_HEADER_VALUE = {'Content-Type': 'not_valid_value'}
 

@@ -8,5 +8,5 @@
 
 ## Run Test via command line
 - Run single test: ```python -m pytest tests\test_post_pytest.py::<test_function>```
-- Run specific tests: ```python -m pytest tests\test_post_pytest.py -k "<test_function_name1> or <test_function_name2>"```
+- Run specific tests: ```python -m pytest -k "<test_1> or <test_2>"```
 - Run all tests: ```python -m pytest```

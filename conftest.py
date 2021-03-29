@@ -1,9 +1,9 @@
 import pytest
-import psycopg2
+# import psycopg2
 import requests
 
 
-@pytest.fixture
+# @pytest.fixture
 def setup_database():
     def connect():
         conn = psycopg2.connect(

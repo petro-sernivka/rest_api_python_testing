@@ -1,4 +1,6 @@
 import requests
+import msgpack
+import bson
 import re
 
 from rest_api_python_testing.consts import *
@@ -74,6 +76,23 @@ def test_headers_list():
     for header in resp.headers._store:
         assert header in EXPECTED_HEADERS, \
             f'"{header}" header is not in expected headers list {EXPECTED_HEADERS}'
+
+
+# The body type of the request corresponds to the type of response
+def test_content_type():
+    for content_type in ('json', 'bson', 'msgpack'):
+        if content_type == 'json':
+            resp_json = requests.post(url=URL, data=PAYLOAD)
+            assert content_type in resp_json.headers['Content-Type'], \
+                "The Json body type of the request doesn't correspond to the type of response"
+        if content_type == 'bson':
+            pass
+        if content_type == 'msgpack':
+            packed = msgpack.packb(PAYLOAD)
+            headers = {'Content-Type': 'application/msgpack'}
+            resp_message_pack = requests.post(url=URL, data=packed, headers=headers)
+            assert content_type in resp_message_pack.headers['Content-Type'], \
+                "The MessagePack body type of the request doesn't correspond to the type of response"
 
 
 # Response time < 50 ms

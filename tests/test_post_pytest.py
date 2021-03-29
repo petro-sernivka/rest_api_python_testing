@@ -1,4 +1,6 @@
 import requests
+import msgpack
+import bson
 import re
 
 from rest_api_python_testing.consts import *
@@ -53,11 +55,44 @@ def test_multiple_post():
         f'Second "hash_value" for {PAYLOAD["email"]} is {resp_body_2["hash_value"]}\n'
 
 
+# Different hash is generated each time for anonymous users
+def test_hash_anonymous():
+    anonymous_payload = PAYLOAD.copy()
+    anonymous_payload['value'] = ''
+
+    for parameter in ('device', 'web'):
+        anonymous_payload['dataType'] = parameter
+        hash_list = []
+        for _ in range(RANDOM_HASH_NUMBER):
+            resp_anonymous = requests.post(url=URL, data=anonymous_payload)
+            hash_list.append(resp_anonymous.json()["hash_value"])
+
+        assert len(set(hash_list)) == RANDOM_HASH_NUMBER, \
+            "Different hash wasn't generated each time for anonymous users"
+
+
 # Verifying headers are as expected
 def test_headers_list():
     for header in resp.headers._store:
         assert header in EXPECTED_HEADERS, \
             f'"{header}" header is not in expected headers list {EXPECTED_HEADERS}'
+
+
+# The body type of the request corresponds to the type of response
+def test_content_type():
+    for content_type in ('json', 'bson', 'msgpack'):
+        if content_type == 'json':
+            resp_json = requests.post(url=URL, data=PAYLOAD)
+            assert content_type in resp_json.headers['Content-Type'], \
+                "The Json body type of the request doesn't correspond to the type of response"
+        if content_type == 'bson':
+            pass
+        if content_type == 'msgpack':
+            packed = msgpack.packb(PAYLOAD)
+            headers = {'Content-Type': 'application/msgpack'}
+            resp_message_pack = requests.post(url=URL, data=packed, headers=headers)
+            assert content_type in resp_message_pack.headers['Content-Type'], \
+                "The MessagePack body type of the request doesn't correspond to the type of response"
 
 
 # Response time < 50 ms
@@ -70,7 +105,22 @@ def test_response_time():
 # Negative testcases
 # Invalid value for parameters
 def test_invalid_parameter_value():
-    for parameter in ('email', 'phone', 'deviceId', 'webServiceId'):
+    inv_payload = PAYLOAD.copy()
+    inv_payload['dataType'] = INVALID_DATATYPE_VALUE
+    resp_inv = requests.post(url=URL, data=inv_payload)
+    resp_body_inv = resp_inv.json()
+
+    assert resp_inv.status_code == 400, \
+        f'Response status code should be 400, not {resp_inv.status_code} for "{INVALID_DATATYPE_VALUE}" dataType'
+
+    assert resp_body_inv['status_code'] == 2, \
+        f'"status_code" should be 2, not {resp_body_inv["status_code"]} for "{INVALID_DATATYPE_VALUE}" dataType'
+
+    assert resp_body_inv['message'] == INVALID_DATATYPE_MESSAGE, \
+        f'"message" should be {INVALID_DATATYPE_MESSAGE}, not {resp_body_inv["message"]} ' \
+        f'for "{INVALID_DATATYPE_VALUE}" dataType'
+
+    for parameter in SUPPORTED_DATATYPE:
         inv_payload = PAYLOAD.copy()
         inv_payload['dataType'] = parameter
 
@@ -85,8 +135,9 @@ def test_invalid_parameter_value():
             assert resp_body_inv['status_code'] == 2, \
                 f'"status_code" should be 2, not {resp_body_inv["status_code"]} for "{value}" {parameter}'
 
-            assert resp_body_inv['message'] == INVALID_VALUE_MESSAGE, \
-                f'"message" should be {INVALID_VALUE_MESSAGE}, not {resp_body_inv["message"]} for "{value}" {parameter}'
+            assert resp_body_inv['message'] == INVALID_VALUE_MESSAGE[parameter], \
+                f'"message" should be {INVALID_VALUE_MESSAGE[parameter]}, not {resp_body_inv["message"]}' \
+                f' for "{value}" {parameter}'
 
 
 # Invalid values in HTTP headers
@@ -109,9 +160,26 @@ def test_unsupported_methods():
 
 
 # Destructive testcases
-# Empty value for email parameter
+# Empty value for parameters
 def test_empty_parameter_value():
-    for parameter in ('email', 'phone', 'deviceId', 'webServiceId'):
+    for parameter in list(PAYLOAD.keys())[:-1]:
+        inv_payload = PAYLOAD.copy()
+        inv_payload[parameter] = ''
+
+        resp_empty_parameter = requests.post(url=URL, data=inv_payload)
+        resp_empty_parameter_json = resp_empty_parameter.json()
+
+        assert resp_empty_parameter.status_code == 400, \
+            f'Response status code should be 400, not {resp_empty_parameter.status_code} for empty {parameter}'
+
+        assert resp_empty_parameter_json['status_code'] == 2, \
+            f'"status_code" should be 2, not {resp_empty_parameter_json["status_code"]} for empty {parameter}'
+
+        assert resp_empty_parameter_json['message'] == EMPTY_PARAMETER_MESSAGE, \
+            f'"message" should be "{EMPTY_PARAMETER_MESSAGE}", not "{resp_empty_parameter_json["message"]}" ' \
+            f'for empty {parameter}'
+
+    for parameter in SUPPORTED_DATATYPE[:-2]:
         inv_payload = PAYLOAD.copy()
         inv_payload['dataType'] = parameter
         inv_payload['value'] = ''
@@ -125,9 +193,9 @@ def test_empty_parameter_value():
         assert resp_empty_value_json['status_code'] == 2, \
             f'"status_code" should be 2, not {resp_empty_value_json["status_code"]} for empty {parameter}'
 
-        assert resp_empty_value_json['message'] == EMPTY_PARAMETER_MESSAGE, \
-            f'"message" should be {EMPTY_PARAMETER_MESSAGE}, not {resp_empty_value_json["message"]} ' \
-            f'for empty {parameter}'
+        assert resp_empty_value_json['message'] == INVALID_VALUE_MESSAGE[parameter], \
+            f'"message" should be "{INVALID_VALUE_MESSAGE[parameter]}", ' \
+            f'not "{resp_empty_value_json["message"]}" for empty {parameter}'
 
 
 # Empty body request

@@ -16,30 +16,31 @@ EXPECTED_HEADERS = ('content-type', 'content-length', 'etag', 'date', 'connectio
 
 ACCEPTABLE_RESPONSE_TIME = 50
 
-INVALID_EMAILS = ('address',
-                  '#@%^%#$@#$@#.com',
-                  '@example.com',
-                  'Joe Smith <email@example.com>',
-                  'email.example.com',
-                  'email@example@example.com',
-                  '.email@example.com',
-                  'email.@example.com',
-                  'email..email@example.com',
-                  'あいうえお@example.com',
-                  'email@example.com (Joe Smith)',
-                  'email@example',
-                  'email@-example.com',
-                  'email@111.222.333.44444',
-                  'email@example..com',
-                  'Abc..123@example.com')
+INVALID_PARAMETER_VALUES = {'email': ('address',
+                                      '#@%^%#$@#$@#.com',
+                                      '@example.com',
+                                      'Joe Smith <email@example.com>',
+                                      'email.example.com',
+                                      'email@example@example.com',
+                                      '.email@example.com',
+                                      'email.@example.com',
+                                      'email..email@example.com',
+                                      'あいうえお@example.com',
+                                      'email@example.com (Joe Smith)',
+                                      'email@example',
+                                      'email@-example.com',
+                                      'email@111.222.333.44444',
+                                      'email@example..com',
+                                      'Abc..123@example.com'),
+                            'phone': ('12345678901',
+                                      '+1234567890a',
+                                      '2345678901',
+                                      '+abcdefghijk'),
+                            'deviceId': (),
+                            'webServiceId': ()}
 
-INVALID_PHONES = ('12345678901',
-                  '+1234567890a',
-                  '2345678901',
-                  '+abcdefghijk')
-
-INVALID_EMAIL_MESSAGE = 'value is not valid'
-EMPTY_EMAIL_MESSAGE = 'auth, sourceId, dataType and value parameters are required to make this request'
+INVALID_VALUE_MESSAGE = 'value is not valid'
+EMPTY_PARAMETER_MESSAGE = 'auth, sourceId, dataType and value parameters are required to make this request'
 
 INVALID_HEADER_VALUE = {'Content-Type': 'not_valid_value'}
 

@@ -3,11 +3,12 @@ import re
 
 from rest_api_python_testing.consts import *
 
+
 resp = requests.post(url=URL, data=PAYLOAD)
 resp_body = resp.json()
 
 
-# Positive tests
+# Positive testcases
 # POST request returns 200 status code
 def test_post_status_code():
     assert resp.status_code == 200, \
@@ -66,21 +67,26 @@ def test_response_time():
         f'actual response time: {resp.elapsed.microseconds / 1000} ms'
 
 
-# Negative tests
-# Invalid value for email parameter
-def test_invalid_email():
-    for email in INVALID_EMAILS:
-        resp_inv = requests.post(url=URL, data={'email': email})
-        resp_body_inv = resp_inv.json()
+# Negative testcases
+# Invalid value for parameters
+def test_invalid_parameter_value():
+    for parameter in ('email', 'phone', 'deviceId', 'webServiceId'):
+        inv_payload = PAYLOAD.copy()
+        inv_payload['dataType'] = parameter
 
-        assert resp_inv.status_code == 400, \
-            f'Response status code should be 400, not {resp_inv.status_code} for "{email}" email'
+        for value in INVALID_PARAMETER_VALUES[parameter]:
+            inv_payload['value'] = value
+            resp_inv = requests.post(url=URL, data=inv_payload)
+            resp_body_inv = resp_inv.json()
 
-        assert resp_body_inv['status_code'] == 2, \
-            f'"status_code" should be 2, not {resp_body_inv["status_code"]} for "{email}" email'
+            assert resp_inv.status_code == 400, \
+                f'Response status code should be 400, not {resp_inv.status_code} for "{value}" {parameter}'
 
-        assert resp_body_inv['message'] == INVALID_EMAIL_MESSAGE, \
-            f'"message" should be {INVALID_EMAIL_MESSAGE}, not {resp_body_inv["message"]} for "{email}" email'
+            assert resp_body_inv['status_code'] == 2, \
+                f'"status_code" should be 2, not {resp_body_inv["status_code"]} for "{value}" {parameter}'
+
+            assert resp_body_inv['message'] == INVALID_VALUE_MESSAGE, \
+                f'"message" should be {INVALID_VALUE_MESSAGE}, not {resp_body_inv["message"]} for "{value}" {parameter}'
 
 
 # Invalid values in HTTP headers
@@ -99,23 +105,29 @@ def test_unsupported_methods():
         resp_unsupported = requests.request(method=method, url=URL, data=PAYLOAD)
 
         assert resp_unsupported.status_code == 404, \
-            f'Response status code should be 404, not {resp_unsupported.status_code} for "{method}" method'
+            f'Response status code should be 400, not {resp_unsupported.status_code} for "{method}" method'
 
 
-# Destructive tests
+# Destructive testcases
 # Empty value for email parameter
-def test_empty_email():
-    resp_empty_email = requests.post(url=URL, data={'email': ''})
-    resp_empty_email_json = resp_empty_email.json()
+def test_empty_parameter_value():
+    for parameter in ('email', 'phone', 'deviceId', 'webServiceId'):
+        inv_payload = PAYLOAD.copy()
+        inv_payload['dataType'] = parameter
+        inv_payload['value'] = ''
 
-    assert resp_empty_email.status_code == 400, \
-        f'Response status code should be 400, not {resp_empty_email.status_code} for empty email'
+        resp_empty_value = requests.post(url=URL, data=inv_payload)
+        resp_empty_value_json = resp_empty_value.json()
 
-    assert resp_empty_email_json['status_code'] == 2, \
-        f'"status_code" should be 2, not {resp_empty_email_json["status_code"]} for empty email'
+        assert resp_empty_value.status_code == 400, \
+            f'Response status code should be 400, not {resp_empty_value.status_code} for empty {parameter}'
 
-    assert resp_empty_email_json['message'] == EMPTY_EMAIL_MESSAGE, \
-        f'"message" should be {EMPTY_EMAIL_MESSAGE}, not {resp_empty_email_json["message"]} for empty email'
+        assert resp_empty_value_json['status_code'] == 2, \
+            f'"status_code" should be 2, not {resp_empty_value_json["status_code"]} for empty {parameter}'
+
+        assert resp_empty_value_json['message'] == EMPTY_PARAMETER_MESSAGE, \
+            f'"message" should be {EMPTY_PARAMETER_MESSAGE}, not {resp_empty_value_json["message"]} ' \
+            f'for empty {parameter}'
 
 
 # Empty body request
@@ -129,5 +141,5 @@ def test_empty_body():
     assert resp_empty_body_json['status_code'] == 2, \
         f'"status_code" should be 2, not {resp_empty_body_json["status_code"]} for empty body'
 
-    assert resp_empty_body_json['message'] == EMPTY_EMAIL_MESSAGE, \
-        f'"message" should be {EMPTY_EMAIL_MESSAGE}, not {resp_empty_body_json["message"]} for empty body'
+    assert resp_empty_body_json['message'] == EMPTY_PARAMETER_MESSAGE, \
+        f'"message" should be {EMPTY_PARAMETER_MESSAGE}, not {resp_empty_body_json["message"]} for empty body'

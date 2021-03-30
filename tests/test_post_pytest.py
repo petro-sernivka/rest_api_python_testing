@@ -4,7 +4,7 @@ import bson
 import re
 
 from rest_api_python_testing.consts import *
-if True: pass
+
 
 # Positive testcases
 # POST request returns 200 status code

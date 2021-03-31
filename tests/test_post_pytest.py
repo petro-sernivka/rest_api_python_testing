@@ -108,10 +108,10 @@ def test_multiple_post():
 
 # Different hash is generated each time for anonymous users
 def test_hash_anonymous():
-    for ct in ('json', 'bson', 'msgpack'):
-        anonymous_payload = PAYLOAD.copy()
-        anonymous_payload['value'] = ''
+    anonymous_payload = PAYLOAD.copy()
+    anonymous_payload['value'] = ''
 
+    for ct in ('json', 'bson', 'msgpack'):
         if ct == 'json':
             for parameter in ('device', 'web'):
                 anonymous_payload['dataType'] = parameter
